@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="UTF-8">
+  <title>Gif App</title>
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+ <!--  <script type="text/javascript" src='java/app.js'></script> -->
+
+</head>
+
+<body>
+
+
+<div class="container">
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="col-md-8">
+
+          <div id="displayArea"></div>
+
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="jumbotron">
+            <div id= "buttonArea"></div>            
+          <br>
+            <input type="text" id='userInput'>
+
+
+            <input type="submit" id="submitButton" class="btn btn-info">
+        </div>
+    </div>
+  </div>
+</div>
+
+       
+
+  <!-- jQuery -->
+<script type="text/javascript">  
+
+var gifArray = ['dog', 'cat', 'skunk', 'monkey', 'turtle'];
+
+
+  for(var i = 0; i < gifArray.length; i++){
+    var gifButtons = $('<button>');
+    gifButtons.attr('data-animal', gifArray[i]);
+    gifButtons.attr('id', 'animalButtons');
+    gifButtons.addClass('btn btn-info');
+   
+
+    gifButtons.html(gifArray[i]);
+    $('#buttonArea').append(gifButtons);
+    console.log(gifArray[i]);
+  }
+
+
+//function for click on buttons already on page
+$("button").on('click', function(){
+  var buttonVal = $(this).attr('data-animal');
+  console.log(buttonVal);
+
+//hooking into Giphy API 
+  var queryURL = "http://api.giphy.com/v1/gifs/search?q=" +
+        buttonVal + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+      $.ajax({
+        url: queryURL,
+        method: "GET"
+      })
+
+      .done(function(response){
+        var results = response.data; 
+
+          for(var i = 0; i < results.length; i++) {
+            var gifDiv = $("<div>");
+
+            var rating = results[i].rating;
+
+            var p = $("<p>").text("Rating: " + rating);
+
+            var image = $("<img>");
+            image.attr("src", results[i].images.fixed_height.url);
+            image.attr('class', 'newImages');
+
+            gifDiv.prepend(p);
+            gifDiv.prepend(image);
+
+            $('#displayArea').prepend(gifDiv);
+
+          }
+
+      })
+
+})
+
+//function for submit button and creating new button on DOM
+
+$('#submitButton').on('click', function(event) {
+  var newAnimal = $('#userInput').val().trim();
+  var newButton = $('<button>' + newAnimal);
+
+  newButton.attr('data-animal', newAnimal);
+  newButton.attr('id', 'animalButtons');
+  newButton.addClass('btn btn-info');
+
+  newButton.html(newAnimal);
+  console.log(newAnimal);
+
+  gifArray.push(newAnimal);
+
+  printButton = $('#buttonArea').append(newButton);
+
+  console.log(gifArray);
+
+
+
+})
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
